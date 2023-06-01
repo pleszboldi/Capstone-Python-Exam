@@ -117,4 +117,27 @@ for i in range(corrs.size):
 
 print(abra1)
 
+###################################################################################################################
+
+P_etf_daily = pd.read_excel('msci_etf.xlsx')
+np_P_etf=np.array(P_etf_daily)
+r_etf=np.log(np.divide(np.subtract(np_P_etf[1:,0], np_P_etf[:-1,0]),np_P_etf[:-1,0])+1)
+df_r_etf = pd.DataFrame(r_etf)
+
+def calculate_ewma_variance(df_etf_returns, decay_factor, window):
+	init_p=100
+	etf_ret=np.array(df_etf_returns)
+	etf_ret1=etf_ret[:init_p]
+	etf_ret2=etf_ret[init_p:]
+	ewma=np.empty([window+1])
+	ewma[0]=np.var(etf_ret1)
+	for i in range(window):
+		ewma[i+1]=(1-decay_factor)*ewma[i]+decay_factor*etf_ret2[i+1]**2
+	df_ewma = pd.DataFrame(ewma)
+	return df_ewma
+
+ew=calculate_ewma_variance(df_r_etf, 0.97, 100)
+print(type(ew))
+print(ew)
+
 
