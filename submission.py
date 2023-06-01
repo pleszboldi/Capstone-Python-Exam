@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import math
+import scipy as sc
 
 P_daily = pd.read_excel('gold_oil_.xlsx')
 
@@ -61,4 +62,59 @@ print(table1)
 
 df_export1 = pd.DataFrame(table1)
 df_export1.to_excel('py_results_1.xlsx')
+
+###################################################################################################################
+
+exp_r_gold=np.mean(r_gold)
+exp_r_oil=np.mean(r_oil)
+vol_gold=np.std(r_gold)
+vol_oil=np.std(r_oil)
+
+#real correlation
+combined = np.vstack((r_gold, r_oil))
+cr=np.corrcoef(combined)
+print(cr)
+
+
+def simulated_returns(expected_return, volatility, correlation, numOfSim):
+	T=numOfSim
+	expected_return2=exp_r_oil
+	volatility2=vol_oil
+	corr_M=np.array(([[1, correlation], [correlation, 1]]))
+	D_chol=np.linalg.cholesky(corr_M)
+	q=np.random.rand(T)
+	rnd_z1=sc.stats.norm.ppf(q,loc=0,scale=1)
+	rnd_z2=sc.stats.norm.ppf(q,loc=0,scale=1)
+	corr_var1=rnd_z1*volatility+expected_return
+	corr_var2=(rnd_z1*D_chol[1,0]+rnd_z2*D_chol[1,1])*volatility2+expected_return2
+	sim_arrs=np.vstack((corr_var1, corr_var2)).T
+	return sim_arrs
+
+arrs=simulated_returns(exp_r_gold, vol_gold, -0.01, 10)
+#print(arrs)
+#print(np.shape(arrs))
+#print(np.corrcoef(arrs.T))
+
+def my_portfolio_2(np_a,np_b,w_a,w_b):
+	T=np_a.size
+	r_portfolio=np.empty([T])
+	for t in range(T):
+		r_portfolio[t]=w_a*np_a[t]+w_b*np_b[t]
+	return r_portfolio
+
+corrs=np.arange(-0.9, 0.91, 0.1)
+w_gold=vol_gold**2/((vol_gold**2)+(vol_oil**2))
+w_oil=vol_oil**2/((vol_gold**2)+(vol_oil**2))
+
+abra1=np.empty([corrs.size])
+for i in range(corrs.size):
+	arrs=simulated_returns(exp_r_gold, vol_gold, corrs[i], 100)
+	asset1=np.array(arrs[:,0])
+	asset2=np.array(arrs[:,1])
+	portfolio_2=my_portfolio_2(asset1,asset2,w_gold,w_oil)
+	abra1[i]=calculate_historical_var(portfolio_2,0.95)*100
+
+
+print(abra1)
+
 
