@@ -59,7 +59,7 @@
 
    \begin{center}
        \vspace*{1cm}
-        \textbf{\Large Time series momentum and funding liquidity in uncertainty} \\
+        \textbf{\Large Capstone Python Exam: Risk Modelling and Prediction} \\
        \vspace{0.5cm}
        \vspace{1.5cm}
        \textbf{Plesz Boldizsár}
@@ -75,7 +75,6 @@
 
 \newpage
 \tableofcontents
-\newpage
 
 \section{1. Feladat}
 \subsection{Adatok}
@@ -94,8 +93,9 @@ r_{i,t}=log(\frac{P_{i,t}-P_{i,t-1}}{P_{i,t-1}} + 1).
 
 \subsection{Dinamikusan változó portfolió}
 Az egyedi, dinamikusan változó portfolió képzésének alap gondolatát \cite{moskowitz2012time} Time series momentum kereskedési stratégiája adta. 
-Ez egy momentum alapú kereskedési stragéia, ami abban különbözik az eredeti ... féle Cross-sectional momentumtól, hogy itt az eszközök nincsenek egymáshoz hasonlítva, csak saját múltbeli hozamaikat tekintik. 
+Ez egy momentum alapú kereskedési stragéia, ami abban különbözik az eredeti \cite{jegadeesh1993returns} féle Cross-sectional momentumtól, hogy itt az eszközök nincsenek egymáshoz hasonlítva, csak saját múltbeli hozamaikat tekintik. 
 \cite{moskowitz2012time} 55 határidős eszközön mutatta meg, hogy magas hozamot generál az a stratégia amely megveszi (eladja) azokat az eszközöket, amelyeknek az elmúlt 12 hónapos hozama pozitív (negatív) volt. 
+\cite{lim2018time} azt találta, hogy a stratégia magas hozamot generált az elmúlt közel 100 évben számos ország részvénypiacán szerte a világon. 
 
 Így a következő súlyozási szabályt alkalmazom. 
 A portfolióban mindig két eszköz van $w_{t}^{A}$ és $w_{t}^{A}$ súlyokkal, amelyekre $|w_{t}^{A}| + |w_{t}^{A}| = 1$ minden időszakban. 
@@ -219,10 +219,21 @@ A variancia becsléshez először 3 részre osztom a mintát.
 Az első részen megbecsülök egy előrejelző modellt sokféle paraméterrel. 
 A második mintán megnézem, hogy ezek hogyan teljesítenek, majd kiválasztom a legjobbat, és tesztelem egy harmadik mintán is. 
 
-
-
-\hyperref[fig:fig3]{3. ábra}
-
+Az előrejelző modell a következő. 
+A a négyzetes hozam idősorra illesztek egy AR(q) modellt: 
+\begin{equation}
+x_t=\alpha_0 + \sum_{i=1}^q \alpha_i *x_{t-i} + \epsilon_t.
+\end{equation}
+Ezután az $\epsilon_t$ maradéktagokra illesztek szintén egy AR(q) modellt. 
+\begin{equation}
+\epsilon_t=\hat{\alpha_0} + \sum_{i=1}^q \hat{\alpha_i} *\epsilon_{t-i} + \hat{\epsilon_t}.
+\end{equation}
+A második mintán $t+1$ időszakra a variancia becslés a következő: 
+\begin{equation}
+\sigma_{t+1}^2=\hat{\alpha_0} + \sum_{i=1}^q \hat{\alpha_i} *\epsilon_{t-i} .
+\end{equation}
+Ezt kiszámolom 20 féle $q$ késleltetésre, és mindegyikre mérem az előrejelzési hibát átlagos négyzetes hibával.  
+Az eredmény a \hyperref[fig:fig3]{3. ábrán} látszik. 
 
 \begin{figure}[H]
 \caption{}
@@ -231,9 +242,13 @@ A második mintán megnézem, hogy ezek hogyan teljesítenek, majd kiválasztom 
         \includegraphics{abra3.png}
 \label{fig:fig3}
 \end{figure}
-\section{Összefoglalás}
 
+A \hyperref[fig:fig3]{3. ábrán} az látszik, hogy messze a legegyszerűbb, 1 késleltetés jelez előre a legkisebb hibával. 
+Ez alapján az elmúlt naphoz tartozó hibatagban van a legtöbb  információ. 
+A késleltetéstől való függés nem lineáris. 
 
+A $q=1$ paraméterrel csinálok becslést az utolsó mintán is. 
+Az utolsó mintán $0.000143$-ról $0.000004$-re javul a négyzetes hiba.
 
 \newpage
 \bibliography{TDK23bib.bib}
