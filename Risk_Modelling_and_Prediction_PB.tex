@@ -194,10 +194,16 @@ Az eredmény mutatja, hogy a diverzifikációnak jelentős hatása lehet negatí
 
 
 \section{3. Feladat}
-
-
-
-\hyperref[fig:fig2]{2. ábra}
+Ehhez a feladathoz az MSCI World Index-et követő ETF-et
+\footnote{Az MSCI World Index-et követő ETF árfolyam forrása a  
+\href{https://finance.yahoo.com/quote/XWD.TO/history/}{Yahoo Finance.}
+} használom. 
+Az exponenciálisan súlyozott mozgó átlag a következőképpen számolható:
+\begin{equation}
+EWMA_t=\alpha * x_t + (1-\alpha)*EWMA_{t-1}. 
+\end{equation}
+Ezt alkalmazom az ETF varianciájára, és kirajzolom a 2018 októberétől 2019 márciusáig tartó időszakot. 
+Az eredményt a \hyperref[fig:fig2]{2. ábra} mutatja. 
 \begin{figure}[H]
 \caption{}
         \centering
@@ -205,11 +211,19 @@ Az eredmény mutatja, hogy a diverzifikációnak jelentős hatása lehet negatí
         \includegraphics{abra2.png}
 \label{fig:fig2}
 \end{figure}
-
+A \hyperref[fig:fig2]{2. ábrán} egy nagy kiugrás látszik a varianciában 2018 december végén. 
+Ez nem meglepő hiszen a 2018-as év végén 9\%-ot esett az S\&P500 részvény index a monetáris politikai szigorítástól való félelem, a lassuló gazdaság, és az élesedő kereskedelmi háború okozta bizonytalanság miatt. 
 
 \section{4. Feladat}
+A variancia becsléshez először 3 részre osztom a mintát. 
+Az első részen megbecsülök egy előrejelző modellt sokféle paraméterrel. 
+A második mintán megnézem, hogy ezek hogyan teljesítenek, majd kiválasztom a legjobbat, és tesztelem egy harmadik mintán is. 
+
+
 
 \hyperref[fig:fig3]{3. ábra}
+
+
 \begin{figure}[H]
 \caption{}
         \centering
