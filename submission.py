@@ -225,7 +225,7 @@ res1=md_p1[0]
 y2=calculate_ewma_variance_1(S2, 0.97, T-1,max_lag)
 md_p2=my_model_pred(S2, max_lag,y2,T)
 var_mse=md_p2[1]
-#print(var_mse[6]*100)
+#print(var_mse[0]*100)
 
 mycolor=(150/255,5/255,160/255)
 figure,axes=plt.subplots()
@@ -254,8 +254,8 @@ def my_model_pred_2(S2, lag,y,T):
 	my_mse=np.sum(np.square(np.subtract(y,r_ar_pred)))/(T-1)
 	return  my_mse
 
-T3=S3.size-7
-y3=calculate_ewma_variance_1(S3, 0.97, T3-1,7)
-md_p3=my_model_pred_2(S3, 7,y3,T3)
+T3=S3.size-1
+y3=calculate_ewma_variance_1(S3, 0.97, T3-1,1)
+md_p3=my_model_pred_2(S3, 1,y3,T3)
 #print(md_p3*100)
 
