@@ -5,6 +5,7 @@ import scipy as sc
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression 
 
+#1. feladat
 #Napi arfolyamok beolvasasa excelbol:
 P_daily = pd.read_excel('gold_oil_.xlsx')
 np_P=np.array(P_daily)
@@ -61,6 +62,7 @@ for i in range(par_lb.size): #vegig megyunk mindket parameter vektoron
 #df_export1.to_excel('py_results_1.xlsx')
 
 ###################################################################################################################
+#2. feladat
 
 #A hozam idosorokhoz tartozo allando atlag es szoras kiszamolasa
 exp_r_gold=np.mean(r_gold)
@@ -111,19 +113,22 @@ for i in range(corrs.size):
 
 mycolor=(150/255,5/255,160/255)
 figure,axes=plt.subplots()
-axes.plot(corrs,table2,color=mycolor)
+axes.plot(corrs,abra1,color=mycolor)
 axes.set(xlabel='Korreláció',ylabel='VaR értékek',title='Diverzifikáció korrelált hozamokkal')
 #figure.savefig('abra1.png')
 #plt.show()
 
 ###################################################################################################################
-
+#3. feladat
+#MSCI World Index ETF betoltes
 P_etf_daily = pd.read_excel('msci_etf.xlsx')
 np_P_etf=np.array(P_etf_daily)
 r_etf=np.log(np.divide(np.subtract(np_P_etf[1:,0], np_P_etf[:-1,0]),np_P_etf[:-1,0])+1)
 df_r_etf = pd.DataFrame(r_etf)
 
+#EWMA szamolo fuggveny
 def calculate_ewma_variance(df_etf_returns, decay_factor, window):
+	#rekurziv szamolas
 	init_p=100
 	etf_ret=np.array(df_etf_returns)
 	etf_ret1=etf_ret[:init_p]
@@ -136,6 +141,7 @@ def calculate_ewma_variance(df_etf_returns, decay_factor, window):
 	return df_ewma
 
 ew=calculate_ewma_variance(df_r_etf, 0.97, 100)
+#abra kirajzolas
 figure,axes=plt.subplots()
 axes.plot(range(ew.size),ew*100,color=mycolor)
 axes.set(xlabel='Idő',ylabel='EWMA variancia',title='EWMA variancia alakulása %-ban')
@@ -143,16 +149,14 @@ axes.set(xlabel='Idő',ylabel='EWMA variancia',title='EWMA variancia alakulása 
 #plt.show()
 
 ###################################################################################################################
-
-P_etf_daily = pd.read_excel('msci_etf.xlsx')
-np_P_etf=np.array(P_etf_daily)
-r_etf=np.log(np.divide(np.subtract(np_P_etf[1:,0], np_P_etf[:-1,0]),np_P_etf[:-1,0])+1)
+#4. feladat
+#minta 3 reszre osztasa
 r2_etf=r_etf**2
-
 S1=r2_etf[:400]
 S2=r2_etf[401:801]
 S3=r2_etf[802:]
 
+#sajat ar modellt keszito fuggveny
 def my_ar(ts,lags):
 	T=ts.size-lags
 	y=ts[lags:]
@@ -164,7 +168,7 @@ def my_ar(ts,lags):
 	residuals=y-y_pred
 	return model, residuals
 
-
+#ar parametereket szamolo fuggveny
 def my_model_param(ts, lags):
 	m_ar_1 = my_ar(ts,lags)
 	model1=m_ar_1[0]
@@ -176,9 +180,7 @@ def my_model_param(ts, lags):
 	#cfs=np.vstack((coeffs1, coeffs2)).T
 	return model1, model2
 
-#cfs=my_model_param(S1, 3)
-#print(cfs)
-
+#variancia szamolas
 def calculate_ewma_variance_1(df_etf_returns, decay_factor, window,b):
 	init_p=b
 	etf_ret=np.array(df_etf_returns)
@@ -190,6 +192,7 @@ def calculate_ewma_variance_1(df_etf_returns, decay_factor, window,b):
 		ewma[i+1]=(1-decay_factor)*ewma[i]+decay_factor*etf_ret2[i+1]**2
 	return ewma
 
+#a predikciot es validalast elvegzo fuggveny barmilyen idosorra es kesleltetesre
 def my_model_pred(S2, max_lag,y,T):
 	#T=S2.size-max_lag
 	my_mse=np.empty(max_lag)
@@ -212,15 +215,15 @@ def my_model_pred(S2, max_lag,y,T):
 	residuals=y-r_ar_pred
 	return residuals, my_mse, r_ar_pred
 
+#feladat megoldas a fuggvenyekkel
+#variancia elorejelzes
 max_lag=20
 T=S2.size-max_lag
 y1=S2[max_lag:]
 md_p1=my_model_pred(S2, max_lag,y1,T)
 res1=md_p1[0]
 y2=calculate_ewma_variance_1(S2, 0.97, T-1,max_lag)
-
 md_p2=my_model_pred(S2, max_lag,y2,T)
-
 var_mse=md_p2[1]
 #print(var_mse[6]*100)
 
@@ -231,6 +234,7 @@ axes.set(xlabel='Késleltetés',ylabel='MSE',title='Variancia előrejelzési hib
 #figure.savefig('abra4.png')
 #plt.show()
 
+#a 3. mintan a legjobb parameteru (7) modell tesztelese
 def my_model_pred_2(S2, lag,y,T):
 	#T=S2.size-max_lag
 	i=lag
@@ -250,9 +254,8 @@ def my_model_pred_2(S2, lag,y,T):
 	my_mse=np.sum(np.square(np.subtract(y,r_ar_pred)))/(T-1)
 	return  my_mse
 
-
 T3=S3.size-7
-y3=calculate_ewma_variance(S3, 0.97, T3-1,7)
+y3=calculate_ewma_variance_1(S3, 0.97, T3-1,7)
 md_p3=my_model_pred_2(S3, 7,y3,T3)
 #print(md_p3*100)
 
