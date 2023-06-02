@@ -29,7 +29,6 @@
 %\usepackage[nameinlink,noabbrev]{cleveref}
 \linespread{1.5}
 \usepackage{geometry}
-%bayes
 \usepackage{lmodern}
 \usepackage{mathrsfs}
 \usepackage{dsfont}
@@ -120,12 +119,12 @@ Tehát annál nagyobb lesz a súlya egy eszköznek, minél nagyobb volt az elmú
 Az \hyperref[eq:eq1]{egyenlet (5)}-ben megadott portfolió hozama függ a napokat jelölő $n$ visszatekintési, és a $p$ kitevő paramétertől. 
 Ezek változtatása különbözőféle diverzifikációhoz vezet, és ez hatással van a kockázati mutatókra is. 
 A következőkben megnézem, hogy különböző $(n,p)$ paraméter kombinációk hogyan hatnak a portfolió mintaidőszakból számított VaR mutatójára. 
-Az eredményt az \hyperref[table:table1]{1. Táblázat} mutatja. 
+Az eredményt az \hyperref[table:table1]{1. táblázat} mutatja. 
 \begin{table}[!ht]
 \tiny
     \centering
     \begin{tabular}{lccccc}
-\textbf{1. Táblázat} &&&& &  \\
+\textbf{1. táblázat} &&&& &  \\
 \toprule
   \multicolumn{6}{c}{\textbf{VaR értékek különböző paraméter kombinációkkal}} \\  
 \midrule
@@ -147,7 +146,7 @@ Az n visszatekintési időszakokat a sorok, a p kitevőket az oszlopok jelölik.
 \end{table}
 A VaR azt a maximum százalékot mutatja, amit veszíthet a portfolió adott konfidencia intervallum mellett a következő időszakban az elmúlt időszak alapján. 
 Tehát a legnagyobb lehetséges veszteséget jelzi előre. 
-\hyperref[table:table1]{1. Táblázat} szerint minél nagyobb a $p$ kitevő, annál negatívabbak az értékek, ami azt jelenti, hogy nem lesz jobb a diverzifikáció, ha erősebb múltbeli napokon alapuló szignálok nagyobb súllyal érvényesülnek. 
+\hyperref[table:table1]{1. táblázat} szerint minél nagyobb a $p$ kitevő, annál negatívabbak az értékek, ami azt jelenti, hogy nem lesz jobb a diverzifikáció, ha erősebb múltbeli napokon alapuló szignálok nagyobb súllyal érvényesülnek. 
 Így a legjobb diverzifikáció az, ha a Sharpe ráta szerű szignál nincs is hatványra emelve. 
 Az n paraméterek között nem lineáris kapcsolat van minden rögzített p kitevő esetében. 
 Kicsivel kisebb kockázatot eredményez az 5, 10 és 40 nap, mint a 20. A legrosszabb eredményeket a 3 és 6 hónap adja. 
@@ -165,7 +164,7 @@ Z^c=(D*Z^T)^T.
 \end{equation}
 A szimulált hozamok Nx2-es mátrixa pedig a következő lesz:
 \begin{equation}
-R_i^S{\mu_i+Z_i^c * \sigma_i, 
+R_i^S = \mu_i*\mathbf{1} +Z_i^c * \sigma_i, 
 \end{equation}
 $Z_i^c$ az i-edik oszlop $\mu_i$ és $\sigma_i$ pedig az i-edik eszköz mintából számolt átlag hozama és szórása. 
 
@@ -177,39 +176,51 @@ w_i=\frac{\sigma_i^2}{\sigma_i^2 +\sigma_j^2}.
 Az így kapott szimulált portfolió függ a korreláció paramétertől, ami előálltja A korrelációs mátrixot. 
 Ezért megnézem, hogy a portfolióra számolt VaR értéke hogyan függ a szimuláció során alkalmazott korrelációtól. 
 $-0.95$-től $0.95$-ig $0.05$-ösével növelem a korrelációt, és kirajzolom az ehhez tartozó VaR értékeket. 
-Az eredményt az \hyperref[fig:fig1]{1. Ábra} mutatja. 
+Az eredményt az \hyperref[fig:fig1]{1. ábra} mutatja. 
 \begin{figure}[H]
+\caption{}
         \centering
         %\includegraphics[height = 0.3, width = 0.6]{abra1.png}
         \includegraphics{abra1.png}
 \label{fig:fig1}
 \end{figure}
 
+Az \hyperref[fig:fig1]{1. ábra} szerint nem lineáris a kapcsolat a szimulált hozamok korreláltsága, és a megfelelő VaR értékek között. 
+Azonban az látható, hogy negatív korrelációnál sokkal kisebb a kockázat, ami várható volt, hiszen ilyenkor ellentétesen kell mozogni a két eszköz árfolyamának. 
+Érdekes viszont, hogy nem a legkisebb, $-0.95$-ös értéknél legkisebb a VaR ($-0.18$), hanem $-0.7$-nél. 
+$-0.7$-től pedig kis ingadozásokkal, de nagyjából lineárisan alakul a kapcsolat. 
+A legnagyobb és legkisebb VaR érték között több, mint 50-szeres különbség van. 
+Az eredmény mutatja, hogy a diverzifikációnak jelentős hatása lehet negatívan korrelált hozamú eszközök esetén. 
+
 
 \section{3. Feladat}
 
 
 
-\hyperref[fig:fig1]{2. Ábra}
+\hyperref[fig:fig2]{2. ábra}
 \begin{figure}[H]
+\caption{}
         \centering
         %\includegraphics[height = 0.3, width = 0.6]{abra1.png}
         \includegraphics{abra2.png}
-\label{fig:fi21}
+\label{fig:fig2}
 \end{figure}
 
 
 \section{4. Feladat}
+
+\hyperref[fig:fig3]{3. ábra}
+\begin{figure}[H]
+\caption{}
+        \centering
+        %\includegraphics[height = 0.3, width = 0.6]{abra1.png}
+        \includegraphics{abra3.png}
+\label{fig:fig3}
+\end{figure}
 \section{Összefoglalás}
 
 
-Although \cite{kim2016time} find that the results of \cite{moskowitz2012time} are largely driven by volatility-scaled returns, and without scaling, there is no significant difference between TSM and a buy-and-hold strategy.
-In this way, I implement every analysis with both volatility-scaled and equal-weighted portfolio formation as follows:
-\begin{flalign}
-	r_{t+1}^{TSM_{EW}}&=\frac{2}{N}(\sum_{r_{i,t-12:t-1 \geq 0}} r_{i,t+1} - \sum_{r_{i,t-12:t-1 < 0}} r_{i,t+1}) \\
-	r_{t+1}^{TSM_{VW}}&=\frac{2}{c}(\sum_{r_{i,t-12:t-1 \geq 0}}\frac{1}{\sigma_{i,t}^{r}} r_{i,t+1} - \sum_{r_{i,t-12:t-1 < 0}} \frac{1}{\sigma_{i,t}^{r}} r_{i,t+1}) 
-\end{flalign}
-where c is the sum of the $\frac{1}{\sigma_{i,t}^{r}}$ weights.
+
 \newpage
 \bibliography{TDK23bib.bib}
 \bibliographystyle{apacite}
